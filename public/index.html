@@ -2,33 +2,30 @@
 <html lang="tr">
 <head>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap');
-        body { background: #0a0a0a; color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; }
-        .logo { position: absolute; top: 20px; left: 30px; font-size: 24px; font-weight: 600; color: #fff; letter-spacing: 1px; }
-        .container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
-        .box { background: #121212; padding: 40px; border-radius: 12px; border: 1px solid #222; width: 320px; text-align: center; }
-        .btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: #fff; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
-        .btn:hover { background: #ccc; }
-        #keyResult { margin-top: 20px; font-size: 11px; color: #666; word-break: break-all; }
+        body { background: #0a0a0a; color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .logo { position: absolute; top: 20px; left: 30px; font-size: 22px; font-weight: 700; color: #00ff41; letter-spacing: 2px; }
+        .card { background: #111; border: 1px solid #333; padding: 40px; border-radius: 15px; width: 350px; text-align: center; }
+        .btn { width: 100%; padding: 14px; margin: 10px 0; background: #000; border: 1px solid #00ff41; color: #00ff41; cursor: pointer; transition: 0.3s; font-weight: 600; }
+        .btn:hover { background: #00ff41; color: #000; }
+        #keyOutput { margin-top: 20px; font-size: 13px; color: #888; }
     </style>
 </head>
 <body>
     <div class="logo">SanderG</div>
-    <div class="container">
-        <div class="box">
-            <button class="btn" onclick="task('sub', '...')">YouTube Abone Ol</button>
-            <button class="btn" onclick="task('join', '...')">Discord Sunucusu</button>
-            <button class="btn" style="background:#222; color:#fff;" onclick="getKey()">ANAHTAR OLUŞTUR</button>
-            <div id="keyResult"></div>
-        </div>
+    <div class="card">
+        <button class="btn" onclick="task('sub', 'https://youtube.com/@Sander1GM')">YouTube Abone Ol</button>
+        <button class="btn" onclick="task('join', 'https://discord.gg/sFJf4ujwt')">Discord'a Katıl</button>
+        <button class="btn" style="border-width: 2px;" onclick="genKey()">ANAHTAR OLUŞTUR</button>
+        <div id="keyOutput"></div>
     </div>
     <script>
-        const userId = new URLSearchParams(window.location.search).get('id'); // Roblox'tan gelen ID
-        async function task(t, l) { window.open(l, '_blank'); await fetch('/api/verify', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId, task:t})}); }
-        async function getKey() {
-            const res = await fetch('/api/get-key', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId})});
+        const id = new URLSearchParams(window.location.search).get('id');
+        if (!id) document.body.innerHTML = "<h2 style='color:red'>Sadece Roblox'tan Erişim İzinli!</h2>";
+        async function task(t, l) { window.open(l, '_blank'); await fetch('/api/verify-task', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId:id, task:t})}); }
+        async function genKey() {
+            const res = await fetch('/api/get-key', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId:id})});
             const d = await res.json();
-            document.getElementById('keyResult').innerText = d.key ? "KEY: " + d.key : d.error;
+            document.getElementById('keyOutput').innerText = d.key || d.error;
         }
     </script>
 </body>
