@@ -1,35 +1,34 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <title>SanderG | Key System</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-        body { background: #050505; color: #fff; font-family: 'Orbitron', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: linear-gradient(145deg, #111, #000); border: 1px solid #333; padding: 40px; border-radius: 25px; width: 380px; text-align: center; box-shadow: 0 0 30px rgba(0, 255, 65, 0.15); border-top: 3px solid #00ff41; }
-        h1 { margin: 0 0 20px; font-size: 24px; color: #00ff41; letter-spacing: 2px; }
-        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #00ff41; background: transparent; color: #00ff41; border-radius: 8px; cursor: pointer; transition: 0.4s; font-family: 'Orbitron'; font-weight: bold; }
-        .btn:hover { background: #00ff41; color: #000; box-shadow: 0 0 15px #00ff41; }
-        #status { margin-top: 20px; font-size: 14px; color: #aaa; }
-        .success { color: #00ff41; text-shadow: 0 0 10px #00ff41; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap');
+        body { background: #0a0a0a; color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; }
+        .logo { position: absolute; top: 20px; left: 30px; font-size: 24px; font-weight: 600; color: #fff; letter-spacing: 1px; }
+        .container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
+        .box { background: #121212; padding: 40px; border-radius: 12px; border: 1px solid #222; width: 320px; text-align: center; }
+        .btn { display: block; width: 100%; padding: 12px; margin: 8px 0; background: #fff; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .btn:hover { background: #ccc; }
+        #keyResult { margin-top: 20px; font-size: 11px; color: #666; word-break: break-all; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>SANDERG V2</h1>
-        <button class="btn" onclick="gorev('sub', 'https://youtube.com/@Sander1GM')">▶ ABONE OL</button>
-        <button class="btn" onclick="gorev('watch', 'https://youtube.com/shorts/6oePpN-TxTY')">👁️ VİDEOYU İZLE</button>
-        <button class="btn" onclick="window.open('https://discord.gg/sFJf4ujwt', '_blank')">💬 DISCORD KATIL</button>
-        <button class="btn" style="border: 2px solid #00ff41;" onclick="keyAl()">GET ACCESS KEY</button>
-        <div id="status">Görevleri tamamla ve erişim kazan.</div>
+    <div class="logo">SanderG</div>
+    <div class="container">
+        <div class="box">
+            <button class="btn" onclick="task('sub', '...')">YouTube Abone Ol</button>
+            <button class="btn" onclick="task('join', '...')">Discord Sunucusu</button>
+            <button class="btn" style="background:#222; color:#fff;" onclick="getKey()">ANAHTAR OLUŞTUR</button>
+            <div id="keyResult"></div>
+        </div>
     </div>
     <script>
-        const userId = "123456"; // Roblox scriptinden gelecek
-        async function gorev(t, l) { window.open(l, '_blank'); await fetch('/api/verify', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId, task:t})}); document.getElementById('status').innerText = "Görev İşlendi!"; }
-        async function keyAl() {
+        const userId = new URLSearchParams(window.location.search).get('id'); // Roblox'tan gelen ID
+        async function task(t, l) { window.open(l, '_blank'); await fetch('/api/verify', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId, task:t})}); }
+        async function getKey() {
             const res = await fetch('/api/get-key', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId})});
             const d = await res.json();
-            document.getElementById('status').innerHTML = d.key ? `<b class="success">KEY: ${d.key}</b>` : `<b style="color:red">${d.error}</b>`;
+            document.getElementById('keyResult').innerText = d.key ? "KEY: " + d.key : d.error;
         }
     </script>
 </body>
