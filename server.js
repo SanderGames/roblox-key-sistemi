@@ -3,29 +3,26 @@ const fs = require('fs');
 const crypto = require('crypto');
 const app = express();
 app.use(express.json());
-app.use(express.static('public'));
 
-const DB_FILE = './sistem_data.json';
-const ADMIN_TOKEN = "SENIN_COK_GIZLI_SIFREN";
-
-// Karmaşık Key Üretici (Sadece ID'ye özel)
-function generateComplexKey(userId) {
-    const rawKey = userId + Date.now() + Math.random();
-    return "SG-" + crypto.createHash('sha256').update(rawKey).digest('hex').substring(0, 24).toUpperCase();
+// ID Kontrolü: Eğer ID yoksa direkt reddet
+function checkReferer(req, res, next) {
+    const userId = req.body.userId || req.query.id;
+    if (!userId) return res.status(403).send("Erişim Reddedildi: Sadece Roblox üzerinden bağlanabilirsiniz.");
+    next();
 }
 
-app.post('/api/get-key', (req, res) => {
+app.post('/api/get-key', checkReferer, (req, res) => {
     const { userId } = req.body;
-    let db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+    // Süreli key (1 saatlik geçerlilik)
+    const expiresAt = Date.now() + (3600 * 1000); 
+    const complexKey = "SG-" + crypto.createHmac('sha256', 'SECRET').update(userId + Date.now()).digest('hex').toUpperCase().substring(0, 20);
     
-    // Sadece Roblox'tan gelen geçerli kullanıcılar
-    if(db.tasks[userId] && db.tasks[userId].sub && db.tasks[userId].join) {
-        const key = generateComplexKey(userId);
-        db.keys[key] = { userId, createdAt: Date.now() };
-        fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
-        res.json({ key });
-    } else { res.status(403).json({ error: "Erişim reddedildi!" }); }
+    // Veritabanına kaydet
+    let db = JSON.parse(fs.readFileSync('./sistem_data.json', 'utf8'));
+    db.keys[complexKey] = { userId, expiresAt };
+    fs.writeFileSync('./sistem_data.json', JSON.stringify(db, null, 2));
+    
+    res.json({ key: complexKey, expires: expiresAt });
 });
 
-// ... (Diğer API'lar aynı kalabilir)
 app.listen(3000);
