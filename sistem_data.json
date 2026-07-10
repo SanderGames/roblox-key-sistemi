@@ -1,0 +1,46 @@
+{
+  "ayarlar": {
+    "youtubeAbone": true,
+    "youtubeBegeni": true,
+    "discordKatilim": false,
+    "youtubeKanalLink": "https://www.youtube.com/watch?v=fKoAOWQHP0o",
+    "youtubeVideoLink": "https://www.youtube.com/watch?v=mUWogUbolGw",
+    "discordLink": "https://discord.gg/DavetKodu",
+    "beklemeSuresiSaniye": 10
+  },
+  "cihazlar": {
+    "3fea1276243f6138631bb98165b143c6598c1978cb16ce3bac0a3fee6bebaa3d": {
+      "mizanpajId": "HWID-TW96WYS81LAKFR3M",
+      "sonAlimZamani": 1783713231678,
+      "cihazOzellikleri": {
+        "tarayiciAyrintisi": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
+        "ekranCozunurlugu": "1536x864",
+        "islemciCekirdekSayisi": 8,
+        "dil": "tr-TR",
+        "platform": "Win32"
+      },
+      "gorevler": {},
+      "key": "PREM-CECDBD22-5D52D81A"
+    },
+    "e6bd6508d0ecd6172f51a79578440666459e26828546364ce79b027cb5f23c90": {
+      "mizanpajId": "WEB-HWID-VCAIG51G8D8DR0J8",
+      "key": "PREM-8BA878C7-E33A868A",
+      "sonAlimZamani": 1783713441067,
+      "cihazOzellikleri": {
+        "isletimSistemi": "Win32",
+        "ekranKarti": "null - null",
+        "islemciCekirdegi": 8,
+        "tahminiBellekRAM": "8 GB",
+        "ekranCozunurlugu": "1536x864",
+        "tarayiciModeli": "Chrome/150.0.0.0 Safari/537.36"
+      },
+      "gorevler": {
+        "youtubeAbone": 1783713443628
+      }
+    }
+  },
+  "aktifKeyler": {
+    "PREM-CECDBD22-5D52D81A": "3fea1276243f6138631bb98165b143c6598c1978cb16ce3bac0a3fee6bebaa3d",
+    "PREM-8BA878C7-E33A868A": "e6bd6508d0ecd6172f51a79578440666459e26828546364ce79b027cb5f23c90"
+  }
+}
