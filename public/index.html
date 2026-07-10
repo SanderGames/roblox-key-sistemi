@@ -1,1 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Roblox Script Lisans Merkezi</title>
+    <style>
+        :root { --bg: #09090d; --card: #111118; --primary: #5f5cf0; --success: #10b981; --text: #f3f4f6; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: var(--card); border: 1px solid #1f1f30; border-radius: 16px; padding: 30px; width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        button { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; font-size: 15px;}
+        .key-display { margin-top: 20px; padding: 15px; background: #141420; border: 1px dashed var(--success); border-radius: 8px; color: var(--success); font-weight: bold; font-family: monospace; display: none; cursor: pointer;}
+    </style>
+</head>
+<body>
 
+    <div class="card">
+        <h2>🎮 Roblox Script Key Sistemi</h2>
+        <p id="robloxIdText" style="color: #888; font-size: 14px;">Roblox ID Aranıyor...</p>
+        
+        <div id="gorevAlani">
+            <p>Key almak için aşağıdaki reklam/sosyal medya görevini tamamlayın:</p>
+            <button onclick="gorevYap()">🔗 Youtube Kanalına Abone Ol</button>
+        </div>
+
+        <button id="keyUretBtn" onclick="keyAl()" style="background: #10b981; display: none;">🔑 Keyimi Oluştur</button>
+        <div id="keyBox" class="key-display" onclick="keyiKopyala()" title="Kopyalamak için tıkla"></div>
+    </div>
+
+    <script>
+        // URL'den (?id=123456) Roblox UserId'sini çekiyoruz
+        const urlParams = new URLSearchParams(window.location.search);
+        const robloxUserId = urlParams.get('id');
+
+        if (!robloxUserId) {
+            document.getElementById('robloxIdText').innerText = "❌ Hata: Roblox içerisinden gelmelisiniz!";
+            document.getElementById('gorevAlani').style.display = "none";
+        } else {
+            document.getElementById('robloxIdText').innerText = "Roblox Oyuncu ID: " + robloxUserId;
+        }
+
+        let gorevTamamlandi = false;
+
+        function gorevYap() {
+            // Backend'e görevin başladığını bildir (Burada senin gerçek linkin olacak)
+            window.open("https://youtube.com/c/Kanaliniz", "_blank");
+            
+            // Simüle edilmiş bekleme süresi, gerçekte bunu backendden saniyeyle kontrol ediyoruz
+            setTimeout(() => {
+                gorevTamamlandi = true;
+                document.getElementById('keyUretBtn').style.style.display = "block";
+                alert("Görev doğrulandı! Şimdi Keyinizi alabilirsiniz.");
+            }, 5000); 
+        }
+
+        async function keyAl() {
+            if(!gorevTamamlandi) return alert("Önce görevi yapmalısınız!");
+
+            const res = await fetch('/api/key-olustur', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cihazId: robloxUserId }) // Cihaz ID olarak Roblox ID'sini gönderiyoruz
+            });
+            
+            const data = await res.json();
+            if(res.ok) {
+                const box = document.getElementById('keyBox');
+                box.innerText = data.key;
+                box.style.display = "block";
+                document.getElementById('keyUretBtn').style.display = "none";
+            } else {
+                alert(data.error);
+            }
+        }
+
+        function keyiKopyala() {
+            const txt = document.getElementById('keyBox').innerText;
+            navigator.clipboard.writeText(txt);
+            alert("Key panoya kopyalandı! Şimdi Roblox'a yapıştırabilirsiniz.");
+        }
+    </script>
+</body>
+</html>
