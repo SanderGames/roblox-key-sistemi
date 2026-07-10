@@ -5,27 +5,36 @@ const DB_FILE = './sistem_data.json';
 const getDB = () => JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
 const saveDB = (db) => fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
 
-app.post('/api/get-key', (req, res) => {
-    const { userId } = req.body;
-    if (!userId) return res.status(403).json({ error: "Roblox ID algılanmadı!" });
-    let db = getDB();
-    if (!db.tasks[userId]?.sub || !db.tasks[userId]?.join) return res.status(403).json({ error: "Görevler tamamlanmadı!" });
-    
-    // Karmaşık ve Süreli Key Üretimi
-    const raw = userId + Date.now() + Math.random();
-    const key = "SG-" + crypto.createHmac('sha256', 'SanderG-Secret').update(raw).digest('hex').toUpperCase().substring(0, 24);
-    db.keys[key] = { userId, expires: Date.now() + 3600000 };
-    saveDB(db);
-    res.json({ key });
-});
+// Roblox ID'si olmayan içeri giremez
+const robloxOnly = (req, res, next) => {
+    if (!req.body.userId && !req.query.id) return res.status(403).send("Roblox'tan gelmeniz gerekli.");
+    next();
+};
 
-app.post('/api/verify-task', (req, res) => {
-    const { userId, task } = req.body;
+app.post('/api/verify', robloxOnly, (req, res) => {
     let db = getDB();
-    if (!db.tasks[userId]) db.tasks[userId] = { sub: false, join: false };
+    const { userId, task } = req.body;
+    if(!db.tasks[userId]) db.tasks[userId] = { sub: false, join: false };
     db.tasks[userId][task] = true;
     saveDB(db);
     res.json({ success: true });
 });
 
-app.listen(3000, () => console.log('SanderG Güvenli Sistem Aktif.'));
+app.post('/api/get-key', robloxOnly, (req, res) => {
+    let db = getDB();
+    const { userId } = req.body;
+    if(db.tasks[userId]?.sub && db.tasks[userId]?.join) {
+        const key = "SG-" + crypto.randomBytes(16).toString('hex').toUpperCase();
+        db.keys[key] = { userId, time: Date.now() };
+        saveDB(db);
+        res.json({ key });
+    } else res.status(403).json({ error: "Görevleri tamamlayın!" });
+});
+
+// Admin Paneli (Basitleştirilmiş)
+app.get('/admin', (req, res) => {
+    const db = getDB();
+    res.send(`<body style="background:#000; color:#0f0; font-family:monospace;"><h1>SanderG Admin</h1><pre>${JSON.stringify(db, null, 2)}</pre></body>`);
+});
+
+app.listen(3000);
