@@ -17,9 +17,9 @@ function veritabanıOku() {
             youtubeAbone: true,
             youtubeBegeni: true,
             discordKatilim: true,
-            youtubeKanalLink: "https://youtube.com/c/Kanaliniz",
-            youtubeVideoLink: "https://youtube.com/watch?v=VideoID",
-            discordLink: "https://discord.gg/DavetKodu",
+            youtubeKanalLink: "https://www.youtube.com/@Sander1GM",
+            youtubeVideoLink: "https://www.youtube.com/shorts/6oePpN-TxTY",
+            discordLink: "https://discord.gg/sFJf4ujwt",
             beklemeSuresiSaniye: 30
         },
         cihazlar: {},
