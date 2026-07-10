@@ -1,28 +1,31 @@
-const express = require('express');
-const fs = require('fs');
-const crypto = require('crypto');
-const app = express();
-app.use(express.json());
+const express = require('express'), fs = require('fs'), crypto = require('crypto'), app = express();
+app.use(express.json()); app.use(express.static('public'));
 
-// ID Kontrolü: Eğer ID yoksa direkt reddet
-function checkReferer(req, res, next) {
-    const userId = req.body.userId || req.query.id;
-    if (!userId) return res.status(403).send("Erişim Reddedildi: Sadece Roblox üzerinden bağlanabilirsiniz.");
-    next();
-}
+const DB_FILE = './sistem_data.json';
+const getDB = () => JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+const saveDB = (db) => fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
 
-app.post('/api/get-key', checkReferer, (req, res) => {
+app.post('/api/get-key', (req, res) => {
     const { userId } = req.body;
-    // Süreli key (1 saatlik geçerlilik)
-    const expiresAt = Date.now() + (3600 * 1000); 
-    const complexKey = "SG-" + crypto.createHmac('sha256', 'SECRET').update(userId + Date.now()).digest('hex').toUpperCase().substring(0, 20);
+    if (!userId) return res.status(403).json({ error: "Roblox ID algılanmadı!" });
+    let db = getDB();
+    if (!db.tasks[userId]?.sub || !db.tasks[userId]?.join) return res.status(403).json({ error: "Görevler tamamlanmadı!" });
     
-    // Veritabanına kaydet
-    let db = JSON.parse(fs.readFileSync('./sistem_data.json', 'utf8'));
-    db.keys[complexKey] = { userId, expiresAt };
-    fs.writeFileSync('./sistem_data.json', JSON.stringify(db, null, 2));
-    
-    res.json({ key: complexKey, expires: expiresAt });
+    // Karmaşık ve Süreli Key Üretimi
+    const raw = userId + Date.now() + Math.random();
+    const key = "SG-" + crypto.createHmac('sha256', 'SanderG-Secret').update(raw).digest('hex').toUpperCase().substring(0, 24);
+    db.keys[key] = { userId, expires: Date.now() + 3600000 };
+    saveDB(db);
+    res.json({ key });
 });
 
-app.listen(3000);
+app.post('/api/verify-task', (req, res) => {
+    const { userId, task } = req.body;
+    let db = getDB();
+    if (!db.tasks[userId]) db.tasks[userId] = { sub: false, join: false };
+    db.tasks[userId][task] = true;
+    saveDB(db);
+    res.json({ success: true });
+});
+
+app.listen(3000, () => console.log('SanderG Güvenli Sistem Aktif.'));
