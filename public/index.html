@@ -1,33 +1,17 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <script src="3a1759aed6107eea450a8090d86e3e7f" async defer></script>
-    <style>
-        body { background: #050505; color: #00ff41; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { border: 1px solid #00ff41; padding: 40px; border-radius: 8px; width: 320px; text-align: center; box-shadow: 0 0 15px #00ff4122; }
-        .logo { position: absolute; top: 20px; left: 30px; font-size: 24px; font-weight: bold; }
-        button { background: #000; color: #00ff41; border: 1px solid #00ff41; padding: 12px; width: 100%; margin: 8px 0; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #00ff41; color: #000; }
-    </style>
-</head>
-<body>
-    <div class="logo">SanderG</div>
-    <div class="box">
-        <button onclick="task('sub', 'https://youtube.com/@Sander1GM')">ABONE OL</button>
-        <button onclick="task('join', 'https://discord.gg/sFJf4ujwt')">SUNUCUYA KATIL</button>
-        <div class="g-recaptcha" data-sitekey="SENIN_SITE_KEYIN"></div>
-        <button onclick="keyAl()">ANAHTARI OLUŞTUR</button>
-        <div id="out" style="margin-top:20px;"></div>
-    </div>
-    <script>
-        const id = new URLSearchParams(window.location.search).get('id');
-        if(!id) document.body.innerHTML = "<h1 style='color:red'>ROBLOX'TAN GELMEN LAZIM!</h1>";
-        async function task(t, l) { window.open(l, '_blank'); await fetch('/api/verify', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId:id, task:t})}); }
-        async function keyAl() {
-            const res = await fetch('/api/get-key', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId:id})});
-            const d = await res.json();
-            document.getElementById('out').innerText = d.key || d.error;
-        }
-    </script>
-</body>
-</html>
+<!-- index.html -->
+<style>
+    :root { --main-color: #004d00; --accent: #00ff41; }
+    body { background: #000; color: #fff; display: grid; grid-template-columns: 250px 1fr; }
+    .sidebar { background: var(--main-color); border: 2px solid var(--accent); padding: 20px; }
+    .content { padding: 40px; }
+    .key-text { border: 1px solid red; padding: 15px; color: #ff0000; font-weight: bold; }
+</style>
+<div class="sidebar">
+    <img src="logo.png" style="width:100px;">
+    <div id="dynamic-links"></div> <!-- YouTube, Discord buraya gelir -->
+</div>
+<div class="content">
+    <h1>Sander G</h1>
+    <div class="key-text" id="admin-text">Sistem sadece oyun içerisinden gelen linkler ile çalışır!</div>
+    <div id="shop"></div> <!-- Mağaza ürünleri burada listelenir -->
+</div>
